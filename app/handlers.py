@@ -13,7 +13,11 @@ def handle_start(message):
 
 @bot.message_handler(commands=['weather_in_city'])
 def handle_weather(message):
-    city = sf.parse_args(message.text)[0]
+    args = sf.parse_args(message.text)
+    if len(args) == 0:
+        bot.reply_to(message, 'Нужно указать имя города!')
+        return
+    city = args[0]
     res = sf.get_weather_data(city)
     if res['cod'] != 200:
         if res['message'] == 'city not found':
