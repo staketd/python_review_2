@@ -14,7 +14,7 @@ def get_message():
     return '!', 200
 
 
-@server.route('/', methods=['GET'])
+@server.route('/')
 def webhook():
     bot.remove_webhook()
     bot.set_webhook(url='https://python-review-2.herokuapp.com/' + TOKEN)
