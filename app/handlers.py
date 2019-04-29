@@ -53,7 +53,7 @@ def handle_roll(message):
 def handle_register(message):
     result = sf.register_user(message.chat.id, message.from_user.username)
     if result:
-        bot.reply_to(message, 'Ты зарагистрован на ежедневную лоттерею!')
+        bot.reply_to(message, 'Ты зарегестрирован на ежедневную лоттерею!')
     else:
         bot.reply_to(message, 'Ты уже зарегестрирован!')
 
