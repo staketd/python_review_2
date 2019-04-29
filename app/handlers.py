@@ -49,6 +49,34 @@ def handle_roll(message):
     bot.reply_to(message, random.randint(1, 100))
 
 
+@bot.message_handler(commands=['register'])
+def handle_register(message):
+    result = sf.register_user(message.chat.id, message.from_user.username)
+    if result:
+        bot.reply_to(message, 'Ты зарагистрован на ежедневную лоттерею!')
+    else:
+        bot.reply_to(message, 'Ты уже зарегестрирован!')
+
+
+@bot.message_handler(commands=['winners'])
+def handle_winners(message):
+    text = sf.get_winners_text(sf.get_winners_this_year(message.chat.id))
+    bot.reply_to(message, text, parse_mode='Markdown')
+
+
+@bot.message_handler(commands=['play'])
+def handle_play(message):
+    res = sf.is_possible(message.chat.id)
+    if res == 1:
+        bot.reply_to(message, 'Сегодня уже проводился розыгрыш!')
+    elif res == 2:
+        bot.reply_to(message, 'Никто не зарегистрирован!')
+    else:
+        winner = sf.choose_winner(message.chat.id)
+        bot.reply_to(message,
+                     'Сегодняшним победителем становится @{}!!'.format(winner))
+
+
 @bot.message_handler(commands=['event'])
 def handle_start_event(message):
     event = EVENTS[message.chat.id]
