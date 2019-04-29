@@ -30,7 +30,7 @@ def handle_weather(message):
         text += 'Температура: {}Сº\n'.format(res['main']['temp'])
         text += 'Скорость ветра: {} м/c\n'.format(res['wind']['speed'])
         text += 'Направление ветра: {}\n'.format(
-            sf.get_wind_direction(res['wind']['deg']))
+            sf.get_wind_direction(res['wind'].get('deg', 0)))
         text += 'Облачность: {}%\n'.format(res['clouds']['all'])
         text += 'Влажность: {}%\n'.format(res['main']['humidity'])
         text += 'Атмосферное давление: {} мм рт ст\n'.format(
