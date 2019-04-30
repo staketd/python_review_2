@@ -110,7 +110,7 @@ def is_possible(chat_id):
 
 
 def choose_winner(chat_id):
-    with sqlite3.connect() as conn:
+    with connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select username from registered
                             where chat_id = '{}' '''.format(chat_id))
