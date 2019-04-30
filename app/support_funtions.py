@@ -116,7 +116,7 @@ def choose_winner(chat_id):
                             where chat_id = '{}' '''.format(chat_id))
         winner_username = random.choice(cursor.fetchall())[0]
         cursor.execute('''insert into winners 
-                            values ('{}', '{}', date())'''.format(
+                            values ('{}', '{}', current_date)'''.format(
             winner_username,
             chat_id))
         cursor.execute('''insert into last_play
