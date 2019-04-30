@@ -65,7 +65,7 @@ def get_winners_this_year(chat_id):
         cursor.execute('''select username, count(dt)
                             from winners
                             where chat_id = '{}' and 
-                            strftime('%Y', 'now') == strftime('%Y', dt)
+                            extract(year from now()) = extract(year from dt)
                             group by username
                             order by count(dt)'''.format(chat_id))
         return cursor.fetchmany(10)
