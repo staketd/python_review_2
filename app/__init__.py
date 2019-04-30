@@ -10,14 +10,14 @@ from contextlib import contextmanager
 url = urlparse(os.environ['DATABASE_URL'])
 dbname = url.path[1:]
 user = url.username
-passowrd = url.password
+password = url.password
 host = url.hostname
 port = url.port
 
 
 @contextmanager
 def connect():
-    connection = psycopg2.connect(dbname=dbname, user=user, passowrd=passowrd,
+    connection = psycopg2.connect(dbname=dbname, user=user, password=password,
                                   host=host, port=port)
     yield connection
     connection.close()
