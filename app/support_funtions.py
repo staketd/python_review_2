@@ -97,7 +97,7 @@ def is_possible(chat_id):
     with connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select * from last_play
-                            where chat_id = '{}' and dt == current_date'''.format(
+                            where chat_id = '{}' and dt = current_date'''.format(
             chat_id))
 
         if cursor.fetchone() is not None:
