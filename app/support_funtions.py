@@ -120,9 +120,8 @@ def choose_winner(chat_id):
             winner_username,
             chat_id))
         cursor.execute('''insert into last_play
-                            values ('{0}', current_date)
+                            values ('{}', current_date)
                             on conflict(chat_id) do update
-                            set dt = current_date
-                            where chat_id = '{0}' '''.format(chat_id))
+                            set dt = current_date'''.format(chat_id))
         conn.commit()
         return winner_username
