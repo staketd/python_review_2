@@ -4,7 +4,7 @@ import random
 import json
 import requests
 import datetime
-from app import WEATHER_API_KEY
+from app import WEATHER_API_KEY, connect
 
 
 def create_event_markup():
@@ -60,7 +60,7 @@ def get_pressur_mm(hpa):
 
 
 def get_winners_this_year(chat_id):
-    with sqlite3.connect('database.db') as conn:
+    with connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select username, count(dt)
                             from winners
@@ -79,7 +79,7 @@ def get_winners_text(arr):
 
 
 def register_user(chat_id, username):
-    with sqlite3.connect('database.db') as conn:
+    with connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select * from registered
                           where username = '{}' and chat_id = '{}' '''.format(
@@ -94,7 +94,7 @@ def register_user(chat_id, username):
 
 
 def is_possible(chat_id):
-    with sqlite3.connect('database.db') as conn:
+    with connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select * from last_play
                             where chat_id = '{}' and dt == current_date'''.format(
@@ -110,7 +110,7 @@ def is_possible(chat_id):
 
 
 def choose_winner(chat_id):
-    with sqlite3.connect('database.db') as conn:
+    with sqlite3.connect() as conn:
         cursor = conn.cursor()
         cursor.execute('''select username from registered
                             where chat_id = '{}' '''.format(chat_id))
@@ -119,10 +119,10 @@ def choose_winner(chat_id):
                             values ('{}', '{}', date())'''.format(
             winner_username,
             chat_id))
-        cursor.execute('''insert or ignore into last_play
-                            values ('{0}', current_date)'''.format(chat_id))
-        cursor.execute('''update last_play 
-                          set dt = current_date
-                          where chat_id = '{0}' ''')
+        cursor.execute('''insert into last_play
+                            values ('{0}', current_date)
+                            on conflict(chat_id) do update last_play 
+                            set dt = current_date
+                            where chat_id = '{0}' '''.format(chat_id))
         conn.commit()
         return winner_username
