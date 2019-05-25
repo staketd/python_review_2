@@ -1,5 +1,5 @@
 from app import bot, EVENTS
-import telebot
+from app import data_base
 import app.support_funtions as sf
 import random
 
@@ -51,7 +51,7 @@ def handle_roll(message):
 
 @bot.message_handler(commands=['register'])
 def handle_register(message):
-    result = sf.register_user(message.chat.id, message.from_user.username)
+    result = data_base.register_user(message.chat.id, message.from_user.username)
     if result:
         bot.reply_to(message, 'Ты зарегестрирован на ежедневную лоттерею!')
     else:
@@ -60,19 +60,19 @@ def handle_register(message):
 
 @bot.message_handler(commands=['winners'])
 def handle_winners(message):
-    text = sf.get_winners_text(sf.get_winners_this_year(message.chat.id))
+    text = sf.get_winners_text(data_base.get_winners_this_year(message.chat.id))
     bot.reply_to(message, text, parse_mode='Markdown')
 
 
 @bot.message_handler(commands=['play'])
 def handle_play(message):
-    res = sf.is_possible(message.chat.id)
+    res = data_base.is_possible(message.chat.id)
     if res == 1:
         bot.reply_to(message, 'Сегодня уже проводился розыгрыш!')
     elif res == 2:
         bot.reply_to(message, 'Никто не зарегистрирован!')
     else:
-        winner = sf.choose_winner(message.chat.id)
+        winner = data_base.choose_winner(message.chat.id)
         bot.reply_to(message,
                      'Сегодняшним победителем становится @{}!!'.format(winner))
 
