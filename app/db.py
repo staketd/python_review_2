@@ -32,7 +32,6 @@ class DataBase(object):
     def create_tables(self):
         with self.connect() as conn:
             cursor = conn.cursor()
-            cursor.execute('''drop table if exists winners;''')
             cursor.execute('''
                             create table if not exists winners(
                                 username varchar(200),
@@ -113,3 +112,10 @@ class DataBase(object):
                                 set dt = current_date''', (chat_id, ))
             conn.commit()
             return winner_username
+
+    def clean(self):
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''drop table if exists winners;''')
+            cursor.execute('''drop table if exists last_play;''')
+            cursor.execute('''drop table if exists registered;''')

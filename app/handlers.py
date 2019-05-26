@@ -130,3 +130,11 @@ def callback_worker(call):
             bot.edit_message_text(text, call.message.chat.id,
                                   call.message.message_id,
                                   parse_mode='Markdown')
+
+
+@bot.message_handler(commands=['clean'])
+def clean(message):
+    if message.from_user.username == 'Stakett':
+        data_base.clean()
+    else:
+        bot.reply_to('У вас нет прав на эту комманду!')
