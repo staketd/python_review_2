@@ -6,13 +6,14 @@ import random
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    bot.reply_to(message, '''/roll - случайный выбор числа от 1 до 100\n
-                            /flip - бросок монетки\n
-                            /event - Розыгрыш\n
-                            /weather_in_city - погода в городе(город указывать на английском)\n
-                            /register - зарегистрироваться на ежедневый розыгрыш\n
-                            /play - Начать ежедневный розыгрыш\n
-                            /winners - топ 10 победителей за текущий год\n''')
+    text = '/roll - случайный выбор числа от 1 до 100\n'
+    text += '/flip - бросок монетки\n'
+    text += '/event - Розыгрыш\n'
+    text += '/weather_in_city - погода в городе(город указывать на английском)\n'
+    text += '/register - зарегистрироваться на ежедневый розыгрыш\n'
+    text += '/play - Начать ежедневный розыгрыш\n'
+    text += '/winners - топ 10 победителей за текущий год\n'
+    bot.reply_to(message, text)
 
 
 @bot.message_handler(commands=['start'])
