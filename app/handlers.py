@@ -137,4 +137,4 @@ def clean(message):
     if message.from_user.username == 'Stakett':
         data_base.clean()
     else:
-        bot.reply_to('У вас нет прав на эту комманду!')
+        bot.reply_to(message,'У вас нет прав на эту комманду!')
