@@ -1,7 +1,19 @@
 from app import bot, EVENTS
-import telebot
+from app import data_base
 import app.support_funtions as sf
 import random
+
+
+@bot.message_handler(commands=['help'])
+def handle_help(message):
+    text = '/roll - случайный выбор числа от 1 до 100\n'
+    text += '/flip - бросок монетки\n'
+    text += '/event - Розыгрыш\n'
+    text += '/weather_in_city - погода в городе(город указывать на английском)\n'
+    text += '/register - зарегистрироваться на ежедневый розыгрыш\n'
+    text += '/play - Начать ежедневный розыгрыш\n'
+    text += '/winners - топ 10 победителей за текущий год\n'
+    bot.reply_to(message, text)
 
 
 @bot.message_handler(commands=['start'])
@@ -51,7 +63,7 @@ def handle_roll(message):
 
 @bot.message_handler(commands=['register'])
 def handle_register(message):
-    result = sf.register_user(message.chat.id, message.from_user.username)
+    result = data_base.register_user(str(message.chat.id), message.from_user.username)
     if result:
         bot.reply_to(message, 'Ты зарегестрирован на ежедневную лоттерею!')
     else:
@@ -60,19 +72,19 @@ def handle_register(message):
 
 @bot.message_handler(commands=['winners'])
 def handle_winners(message):
-    text = sf.get_winners_text(sf.get_winners_this_year(message.chat.id))
+    text = sf.get_winners_text(data_base.get_winners_this_year(str(message.chat.id)))
     bot.reply_to(message, text, parse_mode='Markdown')
 
 
 @bot.message_handler(commands=['play'])
 def handle_play(message):
-    res = sf.is_possible(message.chat.id)
+    res = data_base.is_possible(str(message.chat.id))
     if res == 1:
         bot.reply_to(message, 'Сегодня уже проводился розыгрыш!')
     elif res == 2:
         bot.reply_to(message, 'Никто не зарегистрирован!')
     else:
-        winner = sf.choose_winner(message.chat.id)
+        winner = data_base.choose_winner(str(message.chat.id))
         bot.reply_to(message,
                      'Сегодняшним победителем становится @{}!!'.format(winner))
 
@@ -130,3 +142,11 @@ def callback_worker(call):
             bot.edit_message_text(text, call.message.chat.id,
                                   call.message.message_id,
                                   parse_mode='Markdown')
+
+
+@bot.message_handler(commands=['clean'])
+def clean(message):
+    if message.from_user.username == 'Stakett':
+        data_base.clean()
+    else:
+        bot.reply_to(message, 'У вас нет прав на эту комманду!')
