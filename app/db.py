@@ -120,3 +120,4 @@ class DataBase(object):
             cursor.execute('''drop table if exists last_play;''')
             cursor.execute('''drop table if exists registered;''')
             conn.commit()
+        self.create_tables()
