@@ -53,7 +53,7 @@ class DataBase(object):
             cursor = conn.cursor()
             cursor.execute('''select username, count(dt)
                                 from winners
-                                where chat_id = ? and 
+                                where chat_id = %s and 
                                 extract(year from now()) = extract(year from dt)
                                 group by username
                                 order by count(dt)''', chat_id)
@@ -63,12 +63,13 @@ class DataBase(object):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''select * from registered
-                              where username = (?) and chat_id = (?) ''', (
-                username, chat_id))
+                              where username = %(username)s
+                               and chat_id = %(chat_id)s''',
+                           {"username": username, "chat_id": chat_id})
             if cursor.fetchone() is not None:
                 return False
             cursor.execute('''insert into registered
-                            values(?, ?)  
+                            values(%s, %s)  
                             ''', (username, chat_id))
             conn.commit()
             return True
@@ -77,13 +78,13 @@ class DataBase(object):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''select * from last_play
-                                where chat_id = (?) and dt = current_date''',
+                                where chat_id = %s and dt = current_date''',
                            chat_id)
 
             if cursor.fetchone() is not None:
                 return 1
             cursor.execute('''select * from registered
-                                where chat_id = (?) ''', chat_id)
+                                where chat_id = %s ''', chat_id)
             if cursor.fetchone() is None:
                 return 2
             return 0
@@ -92,14 +93,14 @@ class DataBase(object):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''select username from registered
-                                where chat_id = (?) ''', chat_id)
+                                where chat_id = %s ''', chat_id)
             winner_username = random.choice(cursor.fetchall())[0]
             cursor.execute('''insert into winners 
-                                values ((?), (?), current_date)''', (
+                                values (%s, %s, current_date)''', (
                 winner_username,
                 chat_id))
             cursor.execute('''insert into last_play
-                                values ((?), current_date)
+                                values (%s, current_date)
                                 on conflict(chat_id) do update
                                 set dt = current_date''', chat_id)
             conn.commit()
