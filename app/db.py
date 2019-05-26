@@ -7,6 +7,7 @@ import random
 
 class DataBase(object):
     def __init__(self, db_url):
+        pass
         url = urlparse(os.environ[db_url])
         self.dbname = url.path[1:]
         self.user = url.username
@@ -21,6 +22,13 @@ class DataBase(object):
                                       host=self.host, port=self.port)
         yield connection
         connection.close()
+    # @contextmanager
+    # def connect(self):
+    #     connection = psycopg2.connect(dbname='postgres', user='postgres',
+    #                                   password='LF400ybk', host='localhost',
+    #                                   port=5432)
+    #     yield connection
+    #     connection.close()
 
     def create_tables(self):
         with self.connect() as conn:
@@ -56,7 +64,7 @@ class DataBase(object):
                                 where chat_id = %s and 
                                 extract(year from now()) = extract(year from dt)
                                 group by username
-                                order by count(dt)''', chat_id)
+                                order by count(dt)''', (chat_id, ))
             return cursor.fetchmany(10)
 
     def register_user(self, chat_id, username):
@@ -79,12 +87,12 @@ class DataBase(object):
             cursor = conn.cursor()
             cursor.execute('''select * from last_play
                                 where chat_id = %s and dt = current_date''',
-                           chat_id)
+                           (chat_id, ))
 
             if cursor.fetchone() is not None:
                 return 1
             cursor.execute('''select * from registered
-                                where chat_id = %s ''', chat_id)
+                                where chat_id = %s ''', (chat_id, ))
             if cursor.fetchone() is None:
                 return 2
             return 0
@@ -93,7 +101,7 @@ class DataBase(object):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''select username from registered
-                                where chat_id = %s ''', chat_id)
+                                where chat_id = %s ''', (chat_id, ))
             winner_username = random.choice(cursor.fetchall())[0]
             cursor.execute('''insert into winners 
                                 values (%s, %s, current_date)''', (
@@ -102,6 +110,6 @@ class DataBase(object):
             cursor.execute('''insert into last_play
                                 values (%s, current_date)
                                 on conflict(chat_id) do update
-                                set dt = current_date''', chat_id)
+                                set dt = current_date''', (chat_id, ))
             conn.commit()
             return winner_username
