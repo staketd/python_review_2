@@ -63,7 +63,7 @@ class DataBase(object):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''select * from registered
-                              where username = ? and chat_id = ? ''', (
+                              where username = (?) and chat_id = (?) ''', (
                 username, chat_id))
             if cursor.fetchone() is not None:
                 return False
