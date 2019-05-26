@@ -25,7 +25,7 @@ def get_text_by_event(event):
             text += '{}: `{}`\n'.format(i[0], i[1])
     text += '\n*Победител' + ('и' if len(winners) > 1 else 'ь') + '!*\n'
     for i in winners:
-        text += '{}: `{}`\n'.format(i[0], i[1])
+        text += '{}: `{}`\n'.format(i[0].replace("_", ""), i[1])
     return text
 
 
