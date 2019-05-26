@@ -22,10 +22,10 @@ def get_text_by_event(event):
         if i[1] == maxvalue:
             winners.append(i)
         else:
-            text += '{}: `{}`\n'.format(i[0], i[1])
+            text += '_{}_: `{}`\n'.format(i[0].replace("_", "\\_"), i[1])
     text += '\n*Победител' + ('и' if len(winners) > 1 else 'ь') + '!*\n'
     for i in winners:
-        text += '{}: `{}`\n'.format(i[0].replace("_", "\\_"), i[1])
+        text += '_{}_: `{}`\n'.format(i[0].replace("_", "\\_"), i[1])
     return text
 
 
