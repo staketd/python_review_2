@@ -7,7 +7,6 @@ import random
 
 class DataBase(object):
     def __init__(self, db_url):
-        pass
         url = urlparse(os.environ[db_url])
         self.dbname = url.path[1:]
         self.user = url.username
