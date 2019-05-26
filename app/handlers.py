@@ -4,9 +4,15 @@ import app.support_funtions as sf
 import random
 
 
-@bot.message_handler(commands=[help])
+@bot.message_handler(commands=['help'])
 def handle_help(message):
-    bot.reply_to(message, 'k')
+    bot.reply_to(message, '''/roll - случайный выбор числа от 1 до 100\n
+                            /flip - бросок монетки\n
+                            /event - Розыгрыш\n
+                            /weather_in_city - погода в городе(город указывать на английском)\n
+                            /register - зарегистрироваться на ежедневый розыгрыш\n
+                            /play - Начать ежедневный розыгрыш\n
+                            /winners - топ 10 победителей за текущий год\n''')
 
 
 @bot.message_handler(commands=['start'])
@@ -139,7 +145,7 @@ def callback_worker(call):
 
 @bot.message_handler(commands=['clean'])
 def clean(message):
-    if message.from_user.username == 'Staket_t':
+    if message.from_user.username == 'Stakett':
         data_base.clean()
     else:
-        bot.reply_to(message,'У вас нет прав на эту комманду!')
+        bot.reply_to(message, 'У вас нет прав на эту комманду!')
