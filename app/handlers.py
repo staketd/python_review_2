@@ -4,6 +4,11 @@ import app.support_funtions as sf
 import random
 
 
+@bot.message_handler(commands=[help])
+def handle_help(message):
+    bot.reply_to(message, 'k')
+
+
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     bot.send_message(message.chat.id,
@@ -134,7 +139,7 @@ def callback_worker(call):
 
 @bot.message_handler(commands=['clean'])
 def clean(message):
-    if message.from_user.username == 'Stakett':
+    if message.from_user.username == 'Staket_t':
         data_base.clean()
     else:
         bot.reply_to(message,'У вас нет прав на эту комманду!')

@@ -119,3 +119,4 @@ class DataBase(object):
             cursor.execute('''drop table if exists winners;''')
             cursor.execute('''drop table if exists last_play;''')
             cursor.execute('''drop table if exists registered;''')
+            cursor.commit()
