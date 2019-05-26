@@ -32,6 +32,7 @@ class DataBase(object):
     def create_tables(self):
         with self.connect() as conn:
             cursor = conn.cursor()
+            cursor.execute('''drop table if exists winners;''')
             cursor.execute('''
                             create table if not exists winners(
                                 username varchar(200),

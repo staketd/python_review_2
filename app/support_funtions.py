@@ -61,7 +61,7 @@ def get_pressur_mm(hpa):
 def get_winners_text(arr):
     text = 'Топ-10 участников за этот год!\n'
     for place, user in enumerate(arr):
-        name = user[0].replace("_", "")
+        name = user[0].replace("_", "\\_")
         text += '*{}.* _{}_ - _{}_ _раз(а)_\n'.format(place + 1, name,
                                                     user[1])
     return text
