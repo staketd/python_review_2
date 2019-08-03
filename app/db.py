@@ -21,13 +21,6 @@ class DataBase(object):
                                       host=self.host, port=self.port)
         yield connection
         connection.close()
-    # @contextmanager
-    # def connect(self):
-    #     connection = psycopg2.connect(dbname='postgres', user='postgres',
-    #                                   password='LF400ybk', host='localhost',
-    #                                   port=5432)
-    #     yield connection
-    #     connection.close()
 
     def create_tables(self):
         with self.connect() as conn:

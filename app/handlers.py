@@ -1,4 +1,4 @@
-from app import bot, EVENTS
+from app import bot, EVENTS, PIZZA
 from app import data_base
 import app.support_funtions as sf
 import random
@@ -63,17 +63,36 @@ def handle_roll(message):
 
 @bot.message_handler(commands=['register'])
 def handle_register(message):
-    result = data_base.register_user(str(message.chat.id), message.from_user.username)
+    result = data_base.register_user(str(message.chat.id),
+                                     message.from_user.username)
     if result:
-        bot.reply_to(message, 'Ты зарегестрирован на ежедневную лоттерею!')
+        bot.reply_to(message, 'Ты зарегестрирован(а) на ежедневную лоттерею!')
     else:
-        bot.reply_to(message, 'Ты уже зарегестрирован!')
+        bot.reply_to(message, 'Ты уже зарегистрирован(а)!')
 
 
 @bot.message_handler(commands=['winners'])
 def handle_winners(message):
-    text = sf.get_winners_text(data_base.get_winners_this_year(str(message.chat.id)))
+    text = sf.get_winners_text(
+        data_base.get_winners_this_year(str(message.chat.id)))
     bot.reply_to(message, text, parse_mode='Markdown')
+
+
+@bot.message_handler(commands=['pizza'])
+def handle_pizza(message):
+    pizza = PIZZA[message.chat.id]
+    if pizza.get('running', False):
+        bot.reply_to(message,
+                     'Вы еще не выбрали того кто пойдет за пиццой в прошлый '
+                     'раз! Либо выберете, либо {} должен нажать стоп.'.format(
+                         pizza['creator_username']))
+    else:
+        pizza['running'] = True
+        pizza['creator_username'] = message.from_user.username
+        pizza['participants'] = []
+        pizza['result'] = []
+        bot.reply_to(message, text='Да начнется выбор пиценосца!',
+                     reply_markup=sf.create_pizza_markup())
 
 
 @bot.message_handler(commands=['play'])
@@ -108,7 +127,8 @@ def handle_start_event(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
     event = EVENTS[call.message.chat.id]
-    if call.data == 'roll':
+    pizza = PIZZA[call.message.chat.id]
+    if call.data == 'roll_event':
         if not event.get('running', False):
             bot.answer_callback_query(call.id, 'Розыгрыш еще не начат', True)
         elif call.from_user.username in event['participants']:
@@ -125,7 +145,44 @@ def callback_worker(call):
                                   parse_mode='Markdown')
             bot.answer_callback_query(call.id,
                                       'Ты выбросил {}!'.format(result), True)
-    if call.data == 'stop':
+
+    if call.data == 'participate_pizza':
+        if not pizza.get('running', False):
+            bot.answer_callback_query(call.id, 'Выбор лоха еще не начат', True)
+        elif call.from_user.username in pizza['participants']:
+            bot.answer_callback_query(call.id, 'Ты уже кандидат!', True)
+        else:
+            pizza['participants'].append(call.from_user.username)
+            text = sf.get_text_by_pizza(pizza)
+            bot.edit_message_text(text, call.message.chat.id,
+                                  call.message.message_id,
+                                  reply_markup=sf.create_pizza_markup(),
+                                  parse_mode='Markdown')
+            bot.answer_callback_query(call.id, 'Ты стал кандидатом в лохи!')
+
+    if call.data == 'choose_pizza':
+        if not pizza.get('running', False):
+            bot.answer_callback_query(call.id, 'Выбор лоха еще не начат!',
+                                      True)
+        elif call.from_user.username != pizza['creator_username']:
+            bot.answer_callback_query(call.id,
+                                      'Только {} может выбрать лоха!'.format(
+                                          event['creator_username']), True)
+        elif len(event['participants']) == 0:
+            bot.answer_callback_query(call.id,
+                                      'Вы совсем дебилы?! Не из кого выбирать!',
+                                      True)
+        else:
+            text = sf.get_text_by_pizza(pizza)
+            pizza['running'] = False
+            text += '\n*Выбор завершился!*'
+            bot.edit_message_text(text, call.message.chat.id,
+                                  parse_mode='Markdown')
+            bot.send_message(call.message.chat.id,
+                             'И лохом становится .... {}!'.format(
+                                 random.choice(pizza['participants'])))
+
+    if call.data == 'stop_event':
         if not event.get('running', False):
             bot.answer_callback_query(call.id, 'Розыгрыш еще не начат', True)
         elif call.from_user.username != event['creator_username']:
