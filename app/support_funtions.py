@@ -7,10 +7,21 @@ from app import WEATHER_API_KEY
 def create_event_markup():
     markup = telebot.types.InlineKeyboardMarkup()
     roll = telebot.types.InlineKeyboardButton(text='Ролл',
-                                              callback_data='roll')
+                                              callback_data='roll_event')
     stop = telebot.types.InlineKeyboardButton(text='Остановить розыгрыш',
-                                              callback_data='stop')
+                                              callback_data='stop_event')
     markup.add(roll, stop)
+    return markup
+
+
+def create_pizza_markup():
+    markup = telebot.types.InlineKeyboardMarkup()
+    participate = telebot.types.InlineKeyboardButton(
+        text='Стать кандидатом в лохи',
+        callback_data='participate_pizza')
+    choose = telebot.types.InlineKeyboardButton(text='Выбрать лоха',
+                                                callback_data='choose_pizza')
+    markup.add(participate, choose)
     return markup
 
 
@@ -26,6 +37,13 @@ def get_text_by_event(event):
     text += '\n*Победител' + ('и' if len(winners) > 1 else 'ь') + '!*\n'
     for i in winners:
         text += '{}: `{}`\n'.format(i[0].replace("_", "\\_"), i[1])
+    return text
+
+
+def get_text_by_pizza(pizza):
+    text = '*Кандидаты:*\n'
+    for i in pizza['participants']:
+        text += '{} \n'.format(i.replace("_", "\\_"))
     return text
 
 
