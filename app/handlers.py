@@ -177,6 +177,7 @@ def callback_worker(call):
             pizza['running'] = False
             text += '\n*Выбор завершился!*'
             bot.edit_message_text(text, call.message.chat.id,
+                                  call.message.message_id,
                                   parse_mode='Markdown')
             bot.send_message(call.message.chat.id,
                              'И лохом становится .... {}!'.format(
