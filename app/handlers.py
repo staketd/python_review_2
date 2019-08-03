@@ -167,8 +167,8 @@ def callback_worker(call):
         elif call.from_user.username != pizza['creator_username']:
             bot.answer_callback_query(call.id,
                                       'Только {} может выбрать лоха!'.format(
-                                          event['creator_username']), True)
-        elif len(event['participants']) == 0:
+                                          pizza['creator_username']), True)
+        elif len(pizza['participants']) == 0:
             bot.answer_callback_query(call.id,
                                       'Вы совсем дебилы?! Не из кого выбирать!',
                                       True)
