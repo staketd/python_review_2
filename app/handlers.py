@@ -52,7 +52,7 @@ def handle_weather(message):
 
 @bot.message_handler(commands=['flip'])
 def handle_flip(message):
-    answer = 'Решка' if random.randint(0, 1) else 'Орел'
+    answer = 'Решка' if random.randint(0, 1) else 'Орёл'
     bot.reply_to(message, answer)
 
 
