@@ -83,8 +83,8 @@ def handle_pizza(message):
     pizza = PIZZA[message.chat.id]
     if pizza.get('running', False):
         bot.reply_to(message,
-                     'Вы еще не выбрали того кто пойдет за пиццой в прошлый '
-                     'раз! Либо выберете, либо {} должен нажать стоп.'.format(
+                     'Вы еще не выбрали того кто пойдет за пиццей в прошлый '
+                     'раз! Либо выберите, либо {} должен нажать стоп.'.format(
                          pizza['creator_username']))
     else:
         pizza['running'] = True
